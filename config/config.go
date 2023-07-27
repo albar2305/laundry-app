@@ -3,6 +3,8 @@ package config
 import (
 	"fmt"
 	"os"
+
+	"github.com/albar2305/enigma-laundry-apps/utils/common"
 )
 
 type DbConfig struct {
@@ -19,6 +21,10 @@ type Config struct {
 }
 
 func (c *Config) ReadConfig() error {
+	err := common.LoadEnv()
+	if err != nil {
+		return err
+	}
 	c.DbConfig = DbConfig{
 		Host:     os.Getenv("DB_HOST"),
 		Port:     os.Getenv("DB_PORT"),
