@@ -101,7 +101,7 @@ func (u *UomController) uomUpdateForm() model.Uom {
 	fmt.Scanln(&saveConfirmation)
 	if saveConfirmation == "y" {
 		uom := model.Uom{
-			Id:   uuid.New().String(),
+			Id:   uomID,
 			Name: uomName,
 		}
 		return uom

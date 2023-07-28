@@ -12,7 +12,8 @@ import (
 )
 
 type Console struct {
-	uomUC usecase.UomUseCase
+	uomUC     usecase.UomUseCase
+	prodcutUC usecase.ProductUseCase
 }
 
 func (c *Console) mainMenuForm() {
@@ -39,7 +40,8 @@ func (c *Console) Run() {
 			controller := controller.NewUomController(c.uomUC)
 			controller.UomMenuForm()
 		case "2":
-			fmt.Println("Master Product")
+			productController := controller.NewProductController(c.prodcutUC)
+			productController.HandlerMainForm()
 		case "3":
 			fmt.Println("Master Customer")
 		case "4":
@@ -60,9 +62,11 @@ func NewConsole() *Console {
 	dbConn, _ := config.NewDbConnection(cfg)
 	db := dbConn.Conn()
 	uomRepo := repository.NewUomRepository(db)
+	productRepo := repository.NewProductRepository(db)
 	uomUseCase := usecase.NewUomUseCase(uomRepo)
-
+	productUseCase := usecase.NewProductUseCase(productRepo, uomUseCase)
 	return &Console{
-		uomUC: uomUseCase,
+		uomUC:     uomUseCase,
+		prodcutUC: productUseCase,
 	}
 }

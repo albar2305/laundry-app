@@ -3,6 +3,7 @@ package controller
 import (
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/albar2305/enigma-laundry-apps/model"
 	"github.com/albar2305/enigma-laundry-apps/model/dto"
@@ -43,19 +44,20 @@ func (p *ProductController) HandlerMainForm() {
 			exceptions.CheckErr(err)
 			p.findAllHandlerForm(products, paging)
 			return
-		// case "3":
-		// 	u.uomGetForm()
-		// 	return
-		// case "4":
-		// 	uom := u.uomUpdateForm()
-		// 	err := u.uomUC.UpdateUom(uom)
-		// 	execptions.CheckErr(err)
-		// 	return
-		// case "5":
-		// 	id := u.uomDeleteForm()
-		// 	err := u.uomUC.DeleteUom(id)
-		// 	execptions.CheckErr(err)
-		// 	return
+
+		case "3":
+			p.getHandleForm()
+			return
+		case "4":
+			product := p.updateHandlerForm()
+			err := p.productUC.UpdateProduct(product)
+			exceptions.CheckErr(err)
+			return
+		case "5":
+			id := p.deleteHandleForm()
+			err := p.productUC.DeleteProduct(id)
+			exceptions.CheckErr(err)
+			return
 		case "6":
 			return
 		default:
@@ -93,61 +95,74 @@ func (p *ProductController) createHandlerForm() model.Product {
 }
 
 func (p *ProductController) findAllHandlerForm(products []model.Product, paging dto.Paging) {
+	fmt.Println("Product List")
 	for _, product := range products {
-		fmt.Println("Product List")
 		fmt.Printf("ID: %s \n", product.Id)
 		fmt.Printf("Name: %s \n", product.Name)
 		fmt.Printf("Price: %d \n", product.Price)
 		fmt.Printf("UOM ID: %s \n", product.Uom.Id)
 		fmt.Printf("UOM Name: %s \n", product.Uom.Name)
 		fmt.Println()
-		fmt.Println("Paging: ")
-		fmt.Printf("Page: %d \n", paging.Page)
-		fmt.Printf("RowsPerPage: %d \n", paging.RowsPerPage)
-		fmt.Printf("TotalPages: %d \n", paging.TotalPages)
-		fmt.Printf("TotalRows: %d \n", paging.TotalRows)
 	}
+	fmt.Println("Paging: ")
+	fmt.Printf("Page: %d \n", paging.Page)
+	fmt.Printf("RowsPerPage: %d \n", paging.RowsPerPage)
+	fmt.Printf("TotalPages: %d \n", paging.TotalPages)
+	fmt.Printf("TotalRows: %d \n", paging.TotalRows)
 }
 
-// func (p *ProductController) updateHandlerForm() model.Uom {
-// 	var (
-// 		uomId, uomName, saveConfirmation string
-// 	)
-// 	fmt.Print("UOM ID: ")
-// 	fmt.Scanln(&uomId)
-// 	fmt.Print("UOM Name: ")
-// 	fmt.Scanln(&uomName)
-// 	fmt.Printf("UOM Id: %s, Name: %s akan disimpan (y/t)", uomId, uomName)
-// 	fmt.Scanln(&saveConfirmation)
-// 	if saveConfirmation == "y" {
-// 		uom := model.Uom{
-// 			Id:   uomId,
-// 			Name: uomName,
-// 		}
-// 		return uom
-// 	}
-// 	return model.Uom{}
-// }
+func (p *ProductController) updateHandlerForm() model.Product {
+	var (
+		id, name, price, uomId, saveConfirmation string
+	)
+	fmt.Print("Product ID: ")
+	fmt.Scanln(&id)
 
-// func (p *ProductController) uomDeleteForm() string {
-// 	var id string
-// 	fmt.Print("UOM ID: ")
-// 	fmt.Scanln(&id)
-// 	return id
-// }
+	fmt.Print("Product Name: ")
+	fmt.Scanln(&name)
 
-// func (p *ProductController) uomGetForm() {
-// 	var id string
-// 	fmt.Print("UOM ID: ")
-// 	fmt.Scanln(&id)
-// 	uom, err := u.uomUC.FindByIdUom(id)
-// 	execptions.CheckErr(err)
-// 	fmt.Printf("UOM ID %s \n", id)
-// 	fmt.Println(strings.Repeat("=", 15))
-// 	fmt.Printf("UOM ID: %s \n", uom.Id)
-// 	fmt.Printf("UOM Name: %s \n", uom.Name)
-// 	fmt.Println()
-// }
+	fmt.Print("Product Price: ")
+	fmt.Scanln(&price)
+
+	fmt.Print("Product UOM ID: ")
+	fmt.Scanln(&uomId)
+	priceConv, _ := strconv.Atoi(price)
+	fmt.Printf("Product Id: %s, Name: %s, Price: %d, UOM ID: %s akan disimpan (y/t)", id, name, priceConv, uomId)
+	fmt.Scanln(&saveConfirmation)
+	if saveConfirmation == "y" {
+		product := model.Product{
+			Id:    id,
+			Name:  name,
+			Price: priceConv,
+			Uom:   model.Uom{Id: uomId},
+		}
+		return product
+	}
+	return model.Product{}
+}
+
+func (p *ProductController) deleteHandleForm() string {
+	var id string
+	fmt.Print("UOM ID: ")
+	fmt.Scanln(&id)
+	return id
+}
+
+func (p *ProductController) getHandleForm() {
+	var id string
+	fmt.Print("UOM ID: ")
+	fmt.Scanln(&id)
+	product, err := p.productUC.FindByIdProduct(id)
+	exceptions.CheckErr(err)
+	fmt.Printf("UOM ID %s \n", id)
+	fmt.Println(strings.Repeat("=", 15))
+	fmt.Printf("UOM ID: %s \n", product.Id)
+	fmt.Printf("UOM Name: %s \n", product.Name)
+	fmt.Printf("Price: %d \n", product.Price)
+	fmt.Printf("UOM ID: %s \n", product.Uom.Id)
+	fmt.Printf("UOM Name: %s \n", product.Uom.Name)
+	fmt.Println()
+}
 
 func NewProductController(usecase usecase.ProductUseCase) *ProductController {
 	return &ProductController{productUC: usecase}

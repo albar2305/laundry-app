@@ -18,7 +18,7 @@ type ProductUseCase interface {
 
 type productUseCase struct {
 	repo  repository.ProductRepository
-	uomUC uomUseCase
+	uomUC UomUseCase
 }
 
 func (p *productUseCase) RegisterNewProduct(payload model.Product) error {
@@ -39,12 +39,16 @@ func (p *productUseCase) RegisterNewProduct(payload model.Product) error {
 	return nil
 }
 
-func (p *productUseCase) FindAllProduct(requestPaging dto.PaginationParam) ([]model.Product, dto.Paging, error) {
-	return p.repo.Paging(requestPaging)
+func (p *productUseCase) FindAllProduct(requesPaging dto.PaginationParam) ([]model.Product, dto.Paging, error) {
+	return p.repo.Paging(requesPaging)
 }
 
 func (p *productUseCase) FindByIdProduct(id string) (model.Product, error) {
-	return p.repo.GetById(id)
+	product, err := p.repo.GetById(id)
+	if err != nil {
+		return model.Product{}, fmt.Errorf("tidak ada product dengan id %s", id)
+	}
+	return product, nil
 }
 
 func (p *productUseCase) UpdateProduct(payload model.Product) error {
@@ -55,7 +59,7 @@ func (p *productUseCase) DeleteProduct(id string) error {
 	return p.repo.Delete(id)
 }
 
-func NewProductUseCase(repo repository.ProductRepository, uomUC uomUseCase) ProductUseCase {
+func NewProductUseCase(repo repository.ProductRepository, uomUC UomUseCase) ProductUseCase {
 	return &productUseCase{
 		repo:  repo,
 		uomUC: uomUC,

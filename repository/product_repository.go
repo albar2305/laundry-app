@@ -26,7 +26,7 @@ func (p *productRepository) Create(payload model.Product) error {
 }
 
 func (p *productRepository) List() ([]model.Product, error) {
-	rows, err := p.db.Query("SELECT p.id,p.name,p.price,u.id,u.name FROM product p WHERE uom u ON u.id = p.uom_id")
+	rows, err := p.db.Query("SELECT p.id, p.name, p.price, uom.id, uom.name FROM product p INNER JOIN uom ON uom.id = p.uom_id")
 	if err != nil {
 		return nil, err
 	}
@@ -43,9 +43,10 @@ func (p *productRepository) List() ([]model.Product, error) {
 	return products, nil
 }
 
+// Get implements ProductRepository.
 func (p *productRepository) GetById(id string) (model.Product, error) {
 	var product model.Product
-	row := p.db.QueryRow("SELECT p.id,p.name,p.price,u.id,u.name FROM product p WHERE uom u ON u.id = p.uom_id WHERE p.id = $1", id)
+	row := p.db.QueryRow("SELECT p.id, p.name, p.price, u.id, u.name FROM product p INNER JOIN uom u ON u.id = p.uom_id WHERE p.id = $1", id)
 	err := row.Scan(&product.Id, &product.Name, &product.Price, &product.Uom.Id, &product.Uom.Name)
 	if err != nil {
 		return model.Product{}, err
@@ -71,7 +72,7 @@ func (p *productRepository) Delete(id string) error {
 
 func (p *productRepository) Paging(requestPaging dto.PaginationParam) ([]model.Product, dto.Paging, error) {
 	paginationQuery := common.GetPaginationParams(requestPaging)
-	rows, err := p.db.Query("SELECT p.id,p.name,p.price,u.id,u.name FROM product p WHERE uom u ON u.id = p.uom_id LIMIT $1 OFFSET $2", paginationQuery.Take, paginationQuery.Skip)
+	rows, err := p.db.Query("SELECT p.id, p.name, p.price, u.id, u.name FROM product p INNER JOIN uom u ON u.id = p.uom_id LIMIT $1 OFFSET $2", paginationQuery.Take, paginationQuery.Skip)
 	if err != nil {
 		return nil, dto.Paging{}, err
 	}
@@ -86,7 +87,7 @@ func (p *productRepository) Paging(requestPaging dto.PaginationParam) ([]model.P
 	}
 
 	var totalRows int
-	row := p.db.QueryRow("SELECT COUNT(*) from product")
+	row := p.db.QueryRow("SELECT COUNT(*) FROM product")
 	err = row.Scan(&totalRows)
 	if err != nil {
 		return nil, dto.Paging{}, err
