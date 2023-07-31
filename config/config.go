@@ -7,6 +7,11 @@ import (
 	"github.com/albar2305/enigma-laundry-apps/utils/common"
 )
 
+type ApiConfig struct {
+	ApiHost string
+	ApiPort string
+}
+
 type DbConfig struct {
 	Host     string
 	Port     string
@@ -17,6 +22,7 @@ type DbConfig struct {
 }
 
 type Config struct {
+	ApiConfig
 	DbConfig
 }
 
@@ -33,7 +39,12 @@ func (c *Config) ReadConfig() error {
 		Password: os.Getenv("DB_PASSWORD"),
 		Driver:   os.Getenv("DB_DRIVER"),
 	}
-	if c.DbConfig.Host == "" || c.DbConfig.Port == "" || c.DbConfig.Name == "" || c.DbConfig.User == "" || c.DbConfig.Password == "" || c.DbConfig.Driver == "" {
+
+	c.ApiConfig = ApiConfig{
+		ApiHost: os.Getenv("API_HOST"),
+		ApiPort: os.Getenv("API_PORT"),
+	}
+	if c.DbConfig.Host == "" || c.DbConfig.Port == "" || c.DbConfig.Name == "" || c.DbConfig.User == "" || c.DbConfig.Password == "" || c.DbConfig.Driver == "" || c.ApiConfig.ApiPort == "" || c.ApiConfig.ApiHost == "" {
 		return fmt.Errorf("missing required enviroment variables")
 	}
 	return nil

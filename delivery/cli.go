@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/albar2305/enigma-laundry-apps/config"
-	"github.com/albar2305/enigma-laundry-apps/delivery/controller.go"
+	"github.com/albar2305/enigma-laundry-apps/delivery/controller/cli"
 	"github.com/albar2305/enigma-laundry-apps/repository"
 	"github.com/albar2305/enigma-laundry-apps/usecase"
 	"github.com/albar2305/enigma-laundry-apps/utils/exceptions"
@@ -37,10 +37,10 @@ func (c *Console) Run() {
 		fmt.Scanln(&selectedMenu)
 		switch selectedMenu {
 		case "1":
-			controller := controller.NewUomController(c.uomUC)
+			controller := cli.NewUomController(c.uomUC)
 			controller.UomMenuForm()
 		case "2":
-			productController := controller.NewProductController(c.prodcutUC)
+			productController := cli.NewProductController(c.prodcutUC)
 			productController.HandlerMainForm()
 		case "3":
 			fmt.Println("Master Customer")
