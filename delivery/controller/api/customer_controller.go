@@ -10,37 +10,37 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type ProductController struct {
-	router    *gin.Engine
-	productUC usecase.ProductUseCase
+type CustomerController struct {
+	router     *gin.Engine
+	customerUC usecase.CustomerUseCase
 }
 
-func (p *ProductController) createHandler(c *gin.Context) {
-	var product model.Product
-	if err := c.ShouldBindJSON(&product); err != nil {
+func (customerController *CustomerController) createHandler(c *gin.Context) {
+	var customer model.Customer
+	if err := c.ShouldBindJSON(&customer); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
 		})
 		return
 	}
 
-	if err := p.productUC.RegisterNewProduct(product); err != nil {
+	if err := customerController.customerUC.RegisterNewCustomer(customer); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
 		return
 	}
 
-	c.JSON(http.StatusCreated, product)
+	c.JSON(http.StatusCreated, customer)
 }
-func (p *ProductController) listHandler(c *gin.Context) {
+func (customerController *CustomerController) listHandler(c *gin.Context) {
 	page, _ := strconv.Atoi(c.Query("page"))
 	limit, _ := strconv.Atoi(c.Query("limit"))
 	paginationParams := dto.PaginationParam{
 		Page:  page,
 		Limit: limit,
 	}
-	products, paging, err := p.productUC.FindAllProduct(paginationParams)
+	customers, paging, err := customerController.customerUC.FindAllCustomer(paginationParams)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"err": err.Error()})
 		return
@@ -51,13 +51,13 @@ func (p *ProductController) listHandler(c *gin.Context) {
 	}
 	c.JSON(200, gin.H{
 		"status": status,
-		"data":   products,
+		"data":   customers,
 		"paging": paging,
 	})
 }
-func (p *ProductController) getHandler(c *gin.Context) {
+func (customerController *CustomerController) getHandler(c *gin.Context) {
 	id := c.Param("id")
-	product, err := p.productUC.FindByIdProduct(id)
+	customer, err := customerController.customerUC.FindByIdCustomer(id)
 	if err != nil {
 		c.JSON(500, gin.H{"error": err.Error()})
 		return
@@ -69,17 +69,17 @@ func (p *ProductController) getHandler(c *gin.Context) {
 	}
 	c.JSON(200, gin.H{
 		"status": status,
-		"data":   product,
+		"data":   customer,
 	})
 }
-func (p *ProductController) updateHandler(c *gin.Context) {
-	var product model.Product
-	if err := c.ShouldBindJSON(&product); err != nil {
+func (customerController *CustomerController) updateHandler(c *gin.Context) {
+	var customer model.Customer
+	if err := c.ShouldBindJSON(&customer); err != nil {
 		c.JSON(400, gin.H{"err": err.Error()})
 		return
 	}
 
-	if err := p.productUC.UpdateProduct(product); err != nil {
+	if err := customerController.customerUC.UpdateCustomer(customer); err != nil {
 		c.JSON(500, gin.H{"err": err.Error()})
 		return
 	}
@@ -90,12 +90,12 @@ func (p *ProductController) updateHandler(c *gin.Context) {
 	}
 	c.JSON(200, gin.H{
 		"status": status,
-		"data":   product,
+		"data":   customer,
 	})
 }
-func (p *ProductController) deleteHandler(c *gin.Context) {
+func (customerController *CustomerController) deleteHandler(c *gin.Context) {
 	id := c.Param("id")
-	err := p.productUC.DeleteProduct(id)
+	err := customerController.customerUC.DeleteCustomer(id)
 
 	if err != nil {
 		c.JSON(500, gin.H{"error": err.Error()})
@@ -111,17 +111,17 @@ func (p *ProductController) deleteHandler(c *gin.Context) {
 	})
 }
 
-func NewProductController(r *gin.Engine, usecase usecase.ProductUseCase) *ProductController {
-	controller := ProductController{
-		router:    r,
-		productUC: usecase,
+func NewCustomerController(r *gin.Engine, usecase usecase.CustomerUseCase) *CustomerController {
+	controller := CustomerController{
+		router:     r,
+		customerUC: usecase,
 	}
 	rg := r.Group("/api/v1")
-	rg.POST("/products", controller.createHandler)
-	rg.GET("/products", controller.listHandler)
-	rg.GET("/products/:id", controller.getHandler)
-	rg.PUT("/products", controller.updateHandler)
-	rg.DELETE("/products/:id", controller.deleteHandler)
+	rg.POST("/customers", controller.createHandler)
+	rg.GET("/customers", controller.listHandler)
+	rg.GET("/customers/:id", controller.getHandler)
+	rg.PUT("/customers", controller.updateHandler)
+	rg.DELETE("/customers/:id", controller.deleteHandler)
 
 	return &controller
 

@@ -12,10 +12,12 @@ import (
 )
 
 type Server struct {
-	uomUC     usecase.UomUseCase
-	productUC usecase.ProductUseCase
-	engine    *gin.Engine
-	host      string
+	uomUC      usecase.UomUseCase
+	productUC  usecase.ProductUseCase
+	employeeUC usecase.EmployeeUseCase
+	customerUC usecase.CustomerUseCase
+	engine     *gin.Engine
+	host       string
 }
 
 func (s *Server) RUn() {
@@ -29,6 +31,8 @@ func (s *Server) RUn() {
 func (s *Server) initController() {
 	api.NewUomController(s.uomUC, s.engine)
 	api.NewProductController(s.engine, s.productUC)
+	api.NewEmployeeController(s.engine, s.employeeUC)
+	api.NewCustomerController(s.engine, s.customerUC)
 }
 func NewServer() *Server {
 	cfg, err := config.NewConfig()
@@ -37,14 +41,20 @@ func NewServer() *Server {
 	db := dbConn.Conn()
 	uomRepo := repository.NewUomRepository(db)
 	productRepo := repository.NewProductRepository(db)
+	employeeRepo := repository.NewEmployeeRepository(db)
+	customerRepo := repository.NewCustomerRepository(db)
 	uomUseCase := usecase.NewUomUseCase(uomRepo)
 	productUseCase := usecase.NewProductUseCase(productRepo, uomUseCase)
+	employeeUseCase := usecase.NewEmployeeUseCase(employeeRepo)
+	customerUseCase := usecase.NewCustomerUseCase(customerRepo)
 
 	engine := gin.Default()
 	host := fmt.Sprintf("%s:%s", cfg.ApiHost, cfg.ApiPort)
 	return &Server{
-		uomUC:     uomUseCase,
-		productUC: productUseCase,
-		engine:    engine,
-		host:      host}
+		uomUC:      uomUseCase,
+		productUC:  productUseCase,
+		employeeUC: employeeUseCase,
+		customerUC: customerUseCase,
+		engine:     engine,
+		host:       host}
 }
