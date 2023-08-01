@@ -113,11 +113,12 @@ func NewUomController(usecase usecase.UomUseCase, r *gin.Engine) *UomController 
 		uomUC:  usecase,
 	}
 
-	r.POST("/uoms", controller.createHandler)
-	r.GET("/uoms", controller.listHandler)
-	r.GET("/uoms/:id", controller.getHandler)
-	r.PUT("/uoms", controller.updateHandler)
-	r.DELETE("/uoms/:id", controller.deleteHandler)
+	rg := r.Group("/api/v1")
+	rg.POST("/uoms", controller.createHandler)
+	rg.GET("/uoms", controller.listHandler)
+	rg.GET("/uoms/:id", controller.getHandler)
+	rg.PUT("/uoms", controller.updateHandler)
+	rg.DELETE("/uoms/:id", controller.deleteHandler)
 
 	return &controller
 }
