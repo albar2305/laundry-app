@@ -8,6 +8,7 @@ import (
 	"github.com/albar2305/enigma-laundry-apps/model/dto"
 	"github.com/albar2305/enigma-laundry-apps/usecase"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 type ProductController struct {
@@ -24,6 +25,7 @@ func (p *ProductController) createHandler(c *gin.Context) {
 		return
 	}
 
+	product.Id = uuid.New().String()
 	if err := p.productUC.RegisterNewProduct(product); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),

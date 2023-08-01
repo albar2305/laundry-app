@@ -8,6 +8,7 @@ import (
 	"github.com/albar2305/enigma-laundry-apps/model/dto"
 	"github.com/albar2305/enigma-laundry-apps/usecase"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 type EmployeeController struct {
@@ -24,6 +25,7 @@ func (e *EmployeeController) createHandler(c *gin.Context) {
 		return
 	}
 
+	employee.Id = uuid.New().String()
 	if err := e.employeeUC.RegisterNewEmployee(employee); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),

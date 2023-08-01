@@ -8,6 +8,7 @@ import (
 	"github.com/albar2305/enigma-laundry-apps/model/dto"
 	"github.com/albar2305/enigma-laundry-apps/usecase"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 type CustomerController struct {
@@ -23,6 +24,8 @@ func (customerController *CustomerController) createHandler(c *gin.Context) {
 		})
 		return
 	}
+
+	customer.Id = uuid.New().String()
 
 	if err := customerController.customerUC.RegisterNewCustomer(customer); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{

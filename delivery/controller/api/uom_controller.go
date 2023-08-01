@@ -4,6 +4,7 @@ import (
 	"github.com/albar2305/enigma-laundry-apps/model"
 	"github.com/albar2305/enigma-laundry-apps/usecase"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 type UomController struct {
@@ -18,6 +19,7 @@ func (u *UomController) createHandler(c *gin.Context) {
 		return
 	}
 
+	uom.Id = uuid.New().String()
 	if err := u.uomUC.RegisterNewUom(uom); err != nil {
 		c.JSON(500, gin.H{"err": err.Error()})
 		return
