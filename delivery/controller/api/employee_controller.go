@@ -7,8 +7,8 @@ import (
 	"github.com/albar2305/enigma-laundry-apps/model"
 	"github.com/albar2305/enigma-laundry-apps/model/dto"
 	"github.com/albar2305/enigma-laundry-apps/usecase"
+	"github.com/albar2305/enigma-laundry-apps/utils/common"
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
 
 type EmployeeController struct {
@@ -25,7 +25,7 @@ func (e *EmployeeController) createHandler(c *gin.Context) {
 		return
 	}
 
-	employee.Id = uuid.New().String()
+	employee.Id = common.GenerateID()
 	if err := e.employeeUC.RegisterNewEmployee(employee); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
@@ -105,10 +105,10 @@ func (e *EmployeeController) deleteHandler(c *gin.Context) {
 	}
 
 	status := map[string]any{
-		"code":        200,
+		"code":        204,
 		"description": "Delete Data Successfully",
 	}
-	c.JSON(200, gin.H{
+	c.JSON(204, gin.H{
 		"status": status,
 	})
 }

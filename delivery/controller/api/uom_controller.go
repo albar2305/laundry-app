@@ -3,8 +3,8 @@ package api
 import (
 	"github.com/albar2305/enigma-laundry-apps/model"
 	"github.com/albar2305/enigma-laundry-apps/usecase"
+	"github.com/albar2305/enigma-laundry-apps/utils/common"
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
 
 type UomController struct {
@@ -19,7 +19,7 @@ func (u *UomController) createHandler(c *gin.Context) {
 		return
 	}
 
-	uom.Id = uuid.New().String()
+	uom.Id = common.GenerateID()
 	if err := u.uomUC.RegisterNewUom(uom); err != nil {
 		c.JSON(500, gin.H{"err": err.Error()})
 		return
@@ -100,10 +100,10 @@ func (u *UomController) deleteHandler(c *gin.Context) {
 	}
 
 	status := map[string]any{
-		"code":        200,
+		"code":        204,
 		"description": "Delete Data Successfully",
 	}
-	c.JSON(200, gin.H{
+	c.JSON(204, gin.H{
 		"status": status,
 	})
 

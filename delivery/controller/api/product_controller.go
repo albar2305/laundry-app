@@ -7,8 +7,8 @@ import (
 	"github.com/albar2305/enigma-laundry-apps/model"
 	"github.com/albar2305/enigma-laundry-apps/model/dto"
 	"github.com/albar2305/enigma-laundry-apps/usecase"
+	"github.com/albar2305/enigma-laundry-apps/utils/common"
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
 
 type ProductController struct {
@@ -17,7 +17,7 @@ type ProductController struct {
 }
 
 func (p *ProductController) createHandler(c *gin.Context) {
-	var product model.Product
+	var product dto.ProductRequestDto
 	if err := c.ShouldBindJSON(&product); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
@@ -25,15 +25,27 @@ func (p *ProductController) createHandler(c *gin.Context) {
 		return
 	}
 
-	product.Id = uuid.New().String()
-	if err := p.productUC.RegisterNewProduct(product); err != nil {
+	var newProduct model.Product
+	product.Id = common.GenerateID()
+	newProduct.Id = product.Id
+	newProduct.Name = product.Name
+	newProduct.Price = product.Price
+	newProduct.Uom.Id = product.UomId
+	if err := p.productUC.RegisterNewProduct(newProduct); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
 		return
 	}
 
-	c.JSON(http.StatusCreated, product)
+	status := map[string]any{
+		"code":        http.StatusCreated,
+		"description": "Create Data Successfully",
+	}
+	c.JSON(http.StatusCreated, gin.H{
+		"status": status,
+		"data":   product,
+	})
 }
 func (p *ProductController) listHandler(c *gin.Context) {
 	page, _ := strconv.Atoi(c.Query("page"))
@@ -48,10 +60,10 @@ func (p *ProductController) listHandler(c *gin.Context) {
 		return
 	}
 	status := map[string]any{
-		"code":        200,
+		"code":        http.StatusOK,
 		"description": "Get All Data Successfully",
 	}
-	c.JSON(200, gin.H{
+	c.JSON(http.StatusOK, gin.H{
 		"status": status,
 		"data":   products,
 		"paging": paging,
@@ -61,36 +73,41 @@ func (p *ProductController) getHandler(c *gin.Context) {
 	id := c.Param("id")
 	product, err := p.productUC.FindByIdProduct(id)
 	if err != nil {
-		c.JSON(500, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
 	status := map[string]any{
-		"code":        200,
+		"code":        http.StatusOK,
 		"description": "Get By ID Data Successfully",
 	}
-	c.JSON(200, gin.H{
+	c.JSON(http.StatusOK, gin.H{
 		"status": status,
 		"data":   product,
 	})
 }
 func (p *ProductController) updateHandler(c *gin.Context) {
-	var product model.Product
+	var product dto.ProductRequestDto
 	if err := c.ShouldBindJSON(&product); err != nil {
-		c.JSON(400, gin.H{"err": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"err": err.Error()})
 		return
 	}
 
-	if err := p.productUC.UpdateProduct(product); err != nil {
-		c.JSON(500, gin.H{"err": err.Error()})
+	var newProduct model.Product
+	newProduct.Id = product.Id
+	newProduct.Name = product.Name
+	newProduct.Price = product.Price
+	newProduct.Uom.Id = product.UomId
+	if err := p.productUC.UpdateProduct(newProduct); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"err": err.Error()})
 		return
 	}
 
 	status := map[string]any{
-		"code":        200,
+		"code":        http.StatusOK,
 		"description": "Update Data Successfully",
 	}
-	c.JSON(200, gin.H{
+	c.JSON(http.StatusOK, gin.H{
 		"status": status,
 		"data":   product,
 	})
@@ -100,15 +117,15 @@ func (p *ProductController) deleteHandler(c *gin.Context) {
 	err := p.productUC.DeleteProduct(id)
 
 	if err != nil {
-		c.JSON(500, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
 	status := map[string]any{
-		"code":        200,
+		"code":        http.StatusNoContent,
 		"description": "Delete Data Successfully",
 	}
-	c.JSON(200, gin.H{
+	c.JSON(http.StatusNoContent, gin.H{
 		"status": status,
 	})
 }
