@@ -6,14 +6,12 @@ import (
 
 	"github.com/albar2305/enigma-laundry-apps/config"
 	"github.com/albar2305/enigma-laundry-apps/delivery/controller/cli"
-	"github.com/albar2305/enigma-laundry-apps/repository"
-	"github.com/albar2305/enigma-laundry-apps/usecase"
+	"github.com/albar2305/enigma-laundry-apps/manager"
 	"github.com/albar2305/enigma-laundry-apps/utils/exceptions"
 )
 
 type Console struct {
-	uomUC     usecase.UomUseCase
-	prodcutUC usecase.ProductUseCase
+	useCaseManager manager.UseCaseManager
 }
 
 func (c *Console) mainMenuForm() {
@@ -37,10 +35,10 @@ func (c *Console) Run() {
 		fmt.Scanln(&selectedMenu)
 		switch selectedMenu {
 		case "1":
-			controller := cli.NewUomController(c.uomUC)
+			controller := cli.NewUomController(c.useCaseManager.UomUseCase())
 			controller.UomMenuForm()
 		case "2":
-			productController := cli.NewProductController(c.prodcutUC)
+			productController := cli.NewProductController(c.useCaseManager.ProductUseCase())
 			productController.HandlerMainForm()
 		case "3":
 			fmt.Println("Master Customer")
@@ -59,14 +57,10 @@ func (c *Console) Run() {
 func NewConsole() *Console {
 	cfg, err := config.NewConfig()
 	exceptions.CheckErr(err)
-	dbConn, _ := config.NewDbConnection(cfg)
-	db := dbConn.Conn()
-	uomRepo := repository.NewUomRepository(db)
-	productRepo := repository.NewProductRepository(db)
-	uomUseCase := usecase.NewUomUseCase(uomRepo)
-	productUseCase := usecase.NewProductUseCase(productRepo, uomUseCase)
+	infraManager, _ := manager.NewInfraManager(cfg)
+	repoManager := manager.NewRepoManager(infraManager)
+	useCaseManager := manager.NewUseCaseManagr(repoManager)
 	return &Console{
-		uomUC:     uomUseCase,
-		prodcutUC: productUseCase,
+		useCaseManager: useCaseManager,
 	}
 }
