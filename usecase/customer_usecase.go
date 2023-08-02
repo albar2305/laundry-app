@@ -26,7 +26,7 @@ func (c *cutomerUseCase) RegisterNewCustomer(payload model.Customer) error {
 		return fmt.Errorf("name, phone number and addres are required fields")
 	}
 
-	isExistedPhone, _ := c.repo.GetByPhone(payload.PhoneNumber)
+	isExistedPhone, _ := c.repo.GetPhoneNumber(payload.PhoneNumber)
 
 	if isExistedPhone.PhoneNumber == payload.PhoneNumber {
 		return fmt.Errorf("customer with phone number %s already exists", payload.PhoneNumber)
@@ -44,7 +44,7 @@ func (c *cutomerUseCase) FindAllCustomer(requestPaging dto.PaginationParam) ([]m
 }
 
 func (c *cutomerUseCase) FindByIdCustomer(id string) (model.Customer, error) {
-	customer, err := c.repo.GetById(id)
+	customer, err := c.repo.Get(id)
 	if err != nil {
 		return model.Customer{}, fmt.Errorf("tidak ada customer dengan id %s", id)
 	}
@@ -52,14 +52,14 @@ func (c *cutomerUseCase) FindByIdCustomer(id string) (model.Customer, error) {
 }
 
 func (c *cutomerUseCase) FindByPhoneNumber(phone string) (model.Customer, error) {
-	return c.repo.GetByPhone(phone)
+	return c.repo.GetPhoneNumber(phone)
 }
 func (c *cutomerUseCase) UpdateCustomer(payload model.Customer) error {
 	if payload.Name == "" || payload.PhoneNumber == "" || payload.Address == "" {
 		return fmt.Errorf("name, phone number and addres are required fields")
 	}
 
-	isExistedPhone, _ := c.repo.GetByPhone(payload.PhoneNumber)
+	isExistedPhone, _ := c.repo.GetPhoneNumber(payload.PhoneNumber)
 	if isExistedPhone.PhoneNumber == payload.PhoneNumber && isExistedPhone.Id != payload.Id {
 		return fmt.Errorf("customer with phone number %s already exists", payload.PhoneNumber)
 	}

@@ -10,7 +10,7 @@ import (
 
 type EmployeeRepository interface {
 	BaseRepository[model.Employee]
-	GetByPhone(phone string) (model.Employee, error)
+	GetPhoneNumber(phone string) (model.Employee, error)
 	BaseRepositoryPaging[model.Employee]
 }
 
@@ -42,7 +42,7 @@ func (e *employeeRepository) List() ([]model.Employee, error) {
 	}
 	return employees, nil
 }
-func (e *employeeRepository) GetById(id string) (model.Employee, error) {
+func (e *employeeRepository) Get(id string) (model.Employee, error) {
 	var employee model.Employee
 	err := e.db.QueryRow("SELECT id,name,phone_number,address FROM employee WHERE id=$1", id).Scan(&employee.Id, &employee.Name, &employee.PhoneNumber, &employee.Address)
 	if err != nil {
@@ -58,7 +58,7 @@ func (e *employeeRepository) Update(payload model.Employee) error {
 	}
 	return nil
 }
-func (e *employeeRepository) GetByPhone(phone string) (model.Employee, error) {
+func (e *employeeRepository) GetPhoneNumber(phone string) (model.Employee, error) {
 	var employee model.Employee
 	err := e.db.QueryRow("SELECT id,name,phone_number,address FROM employee WHERE phone_number = $1", phone).Scan(&employee.Id, &employee.Name, &employee.PhoneNumber, &employee.Address)
 	if err != nil {

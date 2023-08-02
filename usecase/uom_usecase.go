@@ -41,7 +41,7 @@ func (u *uomUseCase) FindAllUom() ([]model.Uom, error) {
 }
 
 func (u *uomUseCase) FindByIdUom(id string) (model.Uom, error) {
-	return u.repo.GetById(id)
+	return u.repo.Get(id)
 }
 
 func (u *uomUseCase) UpdateUom(payload model.Uom) error {

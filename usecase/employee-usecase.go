@@ -26,7 +26,7 @@ func (e *employeeUseCase) RegisterNewEmployee(payload model.Employee) error {
 		return fmt.Errorf("name, phone number and addres are required fields")
 	}
 
-	isExistedPhone, _ := e.repo.GetByPhone(payload.PhoneNumber)
+	isExistedPhone, _ := e.repo.GetPhoneNumber(payload.PhoneNumber)
 
 	if isExistedPhone.PhoneNumber == payload.PhoneNumber {
 		return fmt.Errorf("employee with phone number %s already exists", payload.PhoneNumber)
@@ -39,7 +39,7 @@ func (e *employeeUseCase) RegisterNewEmployee(payload model.Employee) error {
 	return nil
 }
 func (e *employeeUseCase) FindByPhoneNumber(phone string) (model.Employee, error) {
-	return e.repo.GetByPhone(phone)
+	return e.repo.GetPhoneNumber(phone)
 }
 
 func (e *employeeUseCase) FindAllEmployee(requestPaging dto.PaginationParam) ([]model.Employee, dto.Paging, error) {
@@ -47,7 +47,7 @@ func (e *employeeUseCase) FindAllEmployee(requestPaging dto.PaginationParam) ([]
 }
 
 func (e *employeeUseCase) FindByIdEmployee(id string) (model.Employee, error) {
-	employee, err := e.repo.GetById(id)
+	employee, err := e.repo.Get(id)
 	if err != nil {
 		return model.Employee{}, fmt.Errorf("tidak ada employee dengan id %s", id)
 	}
@@ -59,7 +59,7 @@ func (e *employeeUseCase) UpdateEmployee(payload model.Employee) error {
 		return fmt.Errorf("name, phone number and addres are required fields")
 	}
 
-	isExistedPhone, _ := e.repo.GetByPhone(payload.PhoneNumber)
+	isExistedPhone, _ := e.repo.GetPhoneNumber(payload.PhoneNumber)
 	if isExistedPhone.PhoneNumber == payload.PhoneNumber && isExistedPhone.Id != payload.Id {
 		return fmt.Errorf("employee with phone number %s already exists", payload.PhoneNumber)
 	}

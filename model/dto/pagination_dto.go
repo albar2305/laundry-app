@@ -14,7 +14,7 @@ type PaginationQuery struct {
 
 type Paging struct {
 	Page        int `json:"page"`
-	RowsPerPage int `json:"rows_per_page"`
-	TotalRows   int `json:"total_rows"`
-	TotalPages  int `json:"total_pages"`
+	RowsPerPage int `json:"rowsPerPage"`
+	TotalRows   int `json:"totalRows"`
+	TotalPages  int `json:"totalPages"`
 }

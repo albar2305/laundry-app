@@ -16,6 +16,7 @@ type Server struct {
 	productUC  usecase.ProductUseCase
 	employeeUC usecase.EmployeeUseCase
 	customerUC usecase.CustomerUseCase
+	billUC     usecase.BillUseCase
 	engine     *gin.Engine
 	host       string
 }
@@ -33,6 +34,7 @@ func (s *Server) initController() {
 	api.NewProductController(s.engine, s.productUC)
 	api.NewEmployeeController(s.engine, s.employeeUC)
 	api.NewCustomerController(s.engine, s.customerUC)
+	api.NewBillController(s.engine, s.billUC)
 }
 func NewServer() *Server {
 	cfg, err := config.NewConfig()
@@ -43,10 +45,12 @@ func NewServer() *Server {
 	productRepo := repository.NewProductRepository(db)
 	employeeRepo := repository.NewEmployeeRepository(db)
 	customerRepo := repository.NewCustomerRepository(db)
+	billRepo := repository.NewBillRepository(db)
 	uomUseCase := usecase.NewUomUseCase(uomRepo)
 	productUseCase := usecase.NewProductUseCase(productRepo, uomUseCase)
 	employeeUseCase := usecase.NewEmployeeUseCase(employeeRepo)
 	customerUseCase := usecase.NewCustomerUseCase(customerRepo)
+	billUseCase := usecase.NewBillUseCase(billRepo, employeeUseCase, customerUseCase, productUseCase)
 
 	engine := gin.Default()
 	host := fmt.Sprintf("%s:%s", cfg.ApiHost, cfg.ApiPort)
@@ -55,6 +59,7 @@ func NewServer() *Server {
 		productUC:  productUseCase,
 		employeeUC: employeeUseCase,
 		customerUC: customerUseCase,
+		billUC:     billUseCase,
 		engine:     engine,
 		host:       host}
 }

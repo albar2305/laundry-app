@@ -44,7 +44,7 @@ func (p *productRepository) List() ([]model.Product, error) {
 }
 
 // Get implements ProductRepository.
-func (p *productRepository) GetById(id string) (model.Product, error) {
+func (p *productRepository) Get(id string) (model.Product, error) {
 	var product model.Product
 	row := p.db.QueryRow("SELECT p.id, p.name, p.price, u.id, u.name FROM product p INNER JOIN uom u ON u.id = p.uom_id WHERE p.id = $1", id)
 	err := row.Scan(&product.Id, &product.Name, &product.Price, &product.Uom.Id, &product.Uom.Name)

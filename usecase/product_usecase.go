@@ -44,7 +44,7 @@ func (p *productUseCase) FindAllProduct(requesPaging dto.PaginationParam) ([]mod
 }
 
 func (p *productUseCase) FindByIdProduct(id string) (model.Product, error) {
-	product, err := p.repo.GetById(id)
+	product, err := p.repo.Get(id)
 	if err != nil {
 		return model.Product{}, fmt.Errorf("tidak ada product dengan id %s", id)
 	}

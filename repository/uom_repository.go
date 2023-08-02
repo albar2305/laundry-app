@@ -39,7 +39,7 @@ func (u *uomRepository) List() ([]model.Uom, error) {
 	}
 	return uoms, nil
 }
-func (u *uomRepository) GetById(id string) (model.Uom, error) {
+func (u *uomRepository) Get(id string) (model.Uom, error) {
 	var uom model.Uom
 	err := u.db.QueryRow("SELECT id,name FROM uom WHERE id=$1", id).Scan(&uom.Id, &uom.Name)
 	if err != nil {

@@ -10,7 +10,7 @@ import (
 
 type CutomerRepository interface {
 	BaseRepository[model.Customer]
-	GetByPhone(phone string) (model.Customer, error)
+	GetPhoneNumber(phone string) (model.Customer, error)
 	BaseRepositoryPaging[model.Customer]
 }
 
@@ -42,7 +42,7 @@ func (c *cutomerRepository) List() ([]model.Customer, error) {
 	}
 	return customers, nil
 }
-func (c *cutomerRepository) GetById(id string) (model.Customer, error) {
+func (c *cutomerRepository) Get(id string) (model.Customer, error) {
 	var customer model.Customer
 	err := c.db.QueryRow("SELECT id,name,phone_number,address FROM customer WHERE id=$1", id).Scan(&customer.Id, &customer.Name, &customer.PhoneNumber, &customer.Address)
 	if err != nil {
@@ -58,7 +58,7 @@ func (c *cutomerRepository) Update(payload model.Customer) error {
 	}
 	return nil
 }
-func (c *cutomerRepository) GetByPhone(phone string) (model.Customer, error) {
+func (c *cutomerRepository) GetPhoneNumber(phone string) (model.Customer, error) {
 	var cutomer model.Customer
 	err := c.db.QueryRow("SELECT id,name,phone_number,address FROM customer WHERE phone_number = $1", phone).Scan(&cutomer.Id, &cutomer.Name, &cutomer.PhoneNumber, &cutomer.Address)
 	if err != nil {
