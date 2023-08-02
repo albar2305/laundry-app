@@ -20,28 +20,30 @@ type Server struct {
 }
 
 func (s *Server) Run() {
-	s.initController()
+	s.setupControllers()
 	err := s.engine.Run(s.host)
 	if err != nil {
 		panic(err)
 	}
 }
 
-func (s *Server) initController() {
+func (s *Server) setupControllers() {
 	s.engine.Use(middleware.LogRequestMiddleware(s.log))
-
+	// semua controller disini
 	api.NewUomController(s.useCaseManager.UomUseCase(), s.engine)
 	api.NewProductController(s.engine, s.useCaseManager.ProductUseCase())
-	api.NewEmployeeController(s.engine, s.useCaseManager.EmployeeUseCase())
 	api.NewCustomerController(s.engine, s.useCaseManager.CustomerUseCase())
+	api.NewEmployeeController(s.engine, s.useCaseManager.EmployeeUseCase())
 	api.NewBillController(s.engine, s.useCaseManager.BillUseCase())
+	api.NewUserController(s.engine, s.useCaseManager.UserUseCase())
 }
+
 func NewServer() *Server {
 	cfg, err := config.NewConfig()
 	exceptions.CheckErr(err)
 	infraManager, _ := manager.NewInfraManager(cfg)
 	repoManager := manager.NewRepoManager(infraManager)
-	useCaseManager := manager.NewUseCaseManagr(repoManager)
+	useCaseManager := manager.NewUseCaseManager(repoManager)
 	engine := gin.Default()
 	host := fmt.Sprintf("%s:%s", cfg.ApiHost, cfg.ApiPort)
 	return &Server{

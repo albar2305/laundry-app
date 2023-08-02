@@ -8,10 +8,16 @@ type RepoManager interface {
 	CustomerRepo() repository.CutomerRepository
 	EmployeeRepo() repository.EmployeeRepository
 	BillRepo() repository.BillRepository
+	UserRepo() repository.UserRepository
 }
 
 type repoManager struct {
 	infra InfraManager
+}
+
+// UserRepo implements RepoManager.
+func (r *repoManager) UserRepo() repository.UserRepository {
+	return repository.NewUserRepository(r.infra.Conn())
 }
 
 // BillRepo implements RepoManager.

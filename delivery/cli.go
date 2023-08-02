@@ -59,7 +59,7 @@ func NewConsole() *Console {
 	exceptions.CheckErr(err)
 	infraManager, _ := manager.NewInfraManager(cfg)
 	repoManager := manager.NewRepoManager(infraManager)
-	useCaseManager := manager.NewUseCaseManagr(repoManager)
+	useCaseManager := manager.NewUseCaseManager(repoManager)
 	return &Console{
 		useCaseManager: useCaseManager,
 	}
