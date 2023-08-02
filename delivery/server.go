@@ -21,7 +21,7 @@ type Server struct {
 	host       string
 }
 
-func (s *Server) RUn() {
+func (s *Server) Run() {
 	s.initController()
 	err := s.engine.Run(s.host)
 	if err != nil {

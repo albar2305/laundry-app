@@ -5,5 +5,5 @@ import (
 )
 
 func main() {
-	delivery.NewServer().RUn()
+	delivery.NewServer().Run()
 }
