@@ -5,15 +5,18 @@ import (
 
 	"github.com/albar2305/enigma-laundry-apps/config"
 	"github.com/albar2305/enigma-laundry-apps/delivery/controller/api"
+	"github.com/albar2305/enigma-laundry-apps/delivery/middleware"
 	"github.com/albar2305/enigma-laundry-apps/manager"
 	"github.com/albar2305/enigma-laundry-apps/utils/exceptions"
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 )
 
 type Server struct {
 	useCaseManager manager.UseCaseManager
 	engine         *gin.Engine
 	host           string
+	log            *logrus.Logger
 }
 
 func (s *Server) Run() {
@@ -25,6 +28,8 @@ func (s *Server) Run() {
 }
 
 func (s *Server) initController() {
+	s.engine.Use(middleware.LogRequestMiddleware(s.log))
+
 	api.NewUomController(s.useCaseManager.UomUseCase(), s.engine)
 	api.NewProductController(s.engine, s.useCaseManager.ProductUseCase())
 	api.NewEmployeeController(s.engine, s.useCaseManager.EmployeeUseCase())
@@ -42,5 +47,7 @@ func NewServer() *Server {
 	return &Server{
 		useCaseManager: useCaseManager,
 		engine:         engine,
-		host:           host}
+		host:           host,
+		log:            logrus.New(),
+	}
 }
