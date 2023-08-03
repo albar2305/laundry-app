@@ -30,7 +30,6 @@ func (u *UserController) createHandler(c *gin.Context) {
 	userResponse := map[string]any{
 		"id":       user.Id,
 		"username": user.Username,
-		"isActive": user.IsActive,
 	}
 
 	c.JSON(http.StatusOK, userResponse)

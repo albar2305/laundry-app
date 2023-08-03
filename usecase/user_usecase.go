@@ -39,6 +39,7 @@ func (u *userUseCase) RegisterNewUser(paylaod model.UserCredential) error {
 	// bytes => sjiadbafiaf7asf8af8as8fasnfajfcnas!dcscsjc
 	bytes, _ := bcrypt.GenerateFromPassword([]byte(paylaod.Password), bcrypt.DefaultCost)
 	paylaod.Password = string(bytes)
+	paylaod.IsActive = true
 	err := u.repo.Create(paylaod)
 	if err != nil {
 		return fmt.Errorf("failed to create user %v", err)

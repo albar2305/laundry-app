@@ -21,7 +21,7 @@ type userRepository struct {
 
 // Create implements UserRepository.
 func (u *userRepository) Create(payload model.UserCredential) error {
-	_, err := u.db.Exec("INSERT INTO user_credential(id, username, password) VALUES ($1, $2, $3)", payload.Id, payload.Username, payload.Password)
+	_, err := u.db.Exec("INSERT INTO user_credential(id, username, password,is_active) VALUES ($1, $2, $3, $4)", payload.Id, payload.Username, payload.Password, payload.IsActive)
 	if err != nil {
 		return err
 	}

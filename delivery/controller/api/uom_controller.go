@@ -1,6 +1,7 @@
 package api
 
 import (
+	"github.com/albar2305/enigma-laundry-apps/delivery/middleware"
 	"github.com/albar2305/enigma-laundry-apps/model"
 	"github.com/albar2305/enigma-laundry-apps/usecase"
 	"github.com/albar2305/enigma-laundry-apps/utils/common"
@@ -116,11 +117,11 @@ func NewUomController(usecase usecase.UomUseCase, r *gin.Engine) *UomController 
 	}
 
 	rg := r.Group("/api/v1")
-	rg.POST("/uoms", controller.createHandler)
-	rg.GET("/uoms", controller.listHandler)
-	rg.GET("/uoms/:id", controller.getHandler)
-	rg.PUT("/uoms", controller.updateHandler)
-	rg.DELETE("/uoms/:id", controller.deleteHandler)
+	rg.POST("/uoms", middleware.AuthMiddelware(), controller.createHandler)
+	rg.GET("/uoms", middleware.AuthMiddelware(), controller.listHandler)
+	rg.GET("/uoms/:id", middleware.AuthMiddelware(), controller.getHandler)
+	rg.PUT("/uoms", middleware.AuthMiddelware(), controller.updateHandler)
+	rg.DELETE("/uoms/:id", middleware.AuthMiddelware(), controller.deleteHandler)
 
 	return &controller
 }
