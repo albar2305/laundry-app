@@ -7,4 +7,6 @@ import (
 type TokenMyClaims struct {
 	jwt.RegisteredClaims
 	Username string `json:"username"`
+	Role     string
+	Services []string
 }
