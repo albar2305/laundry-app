@@ -81,7 +81,6 @@ func (b *billRepository) Get(id string) (dto.BillResponseDto, error) {
 	return billResponseDto, nil
 }
 
-// Paging implements BillRepository.
 func (b *billRepository) List(requestPaging dto.PaginationParam) ([]dto.BillResponseDto, dto.Paging, error) {
 	return nil, dto.Paging{}, nil
 }

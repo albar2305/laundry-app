@@ -1,34 +1,41 @@
 package middleware
 
 import (
-	"fmt"
 	"net/http"
+	"strings"
 
+	"github.com/albar2305/enigma-laundry-apps/utils/security"
 	"github.com/gin-gonic/gin"
 )
 
 type authHeader struct {
-	AuthorizaationHeader string `header:"authorization"`
+	AuthorizationHeader string `header:"Authorization"`
 }
 
-func AuthMiddelware() gin.HandlerFunc {
+func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		if c.Request.URL.Path == "api/v1/login" {
-			c.Next()
-			fmt.Println("login")
-		} else {
-			var h authHeader
-			if err := c.ShouldBindHeader(&h); err != nil {
-				c.JSON(http.StatusUnauthorized, gin.H{"message": "Unauthorized"})
-				c.Abort()
-				return
-			}
-
-			if h.AuthorizaationHeader != "token123" {
-				c.JSON(http.StatusUnauthorized, gin.H{"message": "Unauthorized"})
-				c.Abort()
-				return
-			}
+		var h authHeader
+		if err := c.ShouldBindHeader(&h); err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"message": "Unauthorized"})
+			c.Abort()
+			return
 		}
+
+		tokenHeader := strings.Replace(h.AuthorizationHeader, "Bearer ", "", 1)
+		if tokenHeader == "" {
+			c.JSON(http.StatusUnauthorized, gin.H{"message": "Unauthorized"})
+			c.Abort()
+			return
+		}
+
+		claims, err := security.VerifyAccessToken(tokenHeader)
+		if err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"message": "Unauthorized"})
+			c.Abort()
+			return
+		}
+
+		c.Set("claims", claims)
+		c.Next()
 	}
 }

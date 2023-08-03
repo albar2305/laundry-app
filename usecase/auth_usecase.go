@@ -3,11 +3,11 @@ package usecase
 import (
 	"fmt"
 
-	"github.com/albar2305/enigma-laundry-apps/model"
+	"github.com/albar2305/enigma-laundry-apps/utils/security"
 )
 
 type AuthUseCase interface {
-	Login(usernaame string, password string) (string, error)
+	Login(username string, password string) (string, error)
 }
 
 type authUseCase struct {
@@ -15,25 +15,19 @@ type authUseCase struct {
 }
 
 // Login implements AuthUseCase.
-func (a *authUseCase) Login(usernaame string, password string) (string, error) {
-	user, err := a.usecase.FindByUsernamePassword(usernaame, password)
+func (a *authUseCase) Login(username string, password string) (string, error) {
+	user, err := a.usecase.FindByUsernamePassword(username, password)
 	if err != nil {
-		return "", fmt.Errorf("username of password not found")
+		return "", fmt.Errorf("invalid username or password")
 	}
 
-	token, err := GenerateToken(user)
+	token, err := security.CreateAccessToken(user)
 	if err != nil {
 		return "", fmt.Errorf("failed to generate token")
 	}
 	return token, nil
 }
 
-func GenerateToken(user model.UserCredential) (string, error) {
-	return "token123", nil
-}
-
-func NewAuthUseCase(usercase UserUseCase) AuthUseCase {
-	return &authUseCase{
-		usecase: usercase,
-	}
+func NewAuthUseCase(usecase UserUseCase) AuthUseCase {
+	return &authUseCase{usecase: usecase}
 }

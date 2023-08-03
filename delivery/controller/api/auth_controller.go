@@ -26,10 +26,7 @@ func (a *AuthController) loginHandler(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{
-		"token": token,
-	})
-
+	c.JSON(http.StatusCreated, gin.H{"token": token})
 }
 
 func NewAuthController(r *gin.Engine, usecase usecase.AuthUseCase) *AuthController {
