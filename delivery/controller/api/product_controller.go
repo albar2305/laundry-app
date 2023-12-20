@@ -7,7 +7,6 @@ import (
 	"github.com/albar2305/enigma-laundry-apps/model"
 	"github.com/albar2305/enigma-laundry-apps/model/dto"
 	"github.com/albar2305/enigma-laundry-apps/usecase"
-	"github.com/albar2305/enigma-laundry-apps/utils/common"
 	"github.com/gin-gonic/gin"
 )
 
@@ -26,7 +25,7 @@ func (p *ProductController) createHandler(c *gin.Context) {
 	}
 
 	var newProduct model.Product
-	product.Id = common.GenerateID()
+	// product.Id = common.GenerateID()
 	newProduct.Id = product.Id
 	newProduct.Name = product.Name
 	newProduct.Price = product.Price
@@ -141,7 +140,5 @@ func NewProductController(r *gin.Engine, usecase usecase.ProductUseCase) *Produc
 	rg.GET("/products/:id", controller.getHandler)
 	rg.PUT("/products", controller.updateHandler)
 	rg.DELETE("/products/:id", controller.deleteHandler)
-
 	return &controller
-
 }

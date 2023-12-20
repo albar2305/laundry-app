@@ -6,12 +6,11 @@ import (
 	"strconv"
 
 	"github.com/albar2305/enigma-laundry-apps/model/dto"
-	"github.com/albar2305/enigma-laundry-apps/utils/exceptions"
 )
 
 func GetPaginationParams(param dto.PaginationParam) dto.PaginationQuery {
-	err := LoadEnv()
-	exceptions.CheckErr(err)
+	// err := LoadEnv()
+	// exceptions.CheckErr(err)
 	var (
 		page, take, skip int
 	)
